@@ -134,6 +134,7 @@
   import "~/assets/css/web.css";
 
   import cookie from 'js-cookie'
+  import login from '@/api/login'
 
   export default {
     data() {
@@ -150,9 +151,31 @@
       }
     },
     created() {
+      // 获取地址栏后面拼接的token
+      this.token = this.$route.query.token
+      if (this.token) {
+        // 调用微信登录的接口
+        this.loginWx();
+      }
+
       this.getUserInfoByCookie()
     },
     methods: {
+      // 微信登录
+      loginWx() {
+        // 将token 存放到cookie中
+        cookie.set('guLi_token', this.token, {domain: 'localhost'})
+        cookie.set('guLi_ucenter', "", {domain: 'localhost'})
+
+        login.getUserInfoByToken().then(
+          response => {
+            this.loginInfo = response.data.data.ucenterMember;
+            cookie.set('guLi_ucenter', this.loginInfo, {domain: 'localhost'})
+          }
+        )
+
+      },
+
       //获取用户信息
       getUserInfoByCookie() {
         let ucenter = cookie.get("guLi_ucenter");
