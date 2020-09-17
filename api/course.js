@@ -14,5 +14,11 @@ export default {
       url: `/eduService/eduSubject/getAllSubjectByOneAndTwo`,
       method: 'get'
     })
+  },
+  getCourseDetails(courseId) {
+    return request({
+      url: `/eduService/eduCourse/getFrontCourseDetails/${courseId}`,
+      method: 'get'
+    })
   }
 }
