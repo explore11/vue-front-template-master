@@ -31,9 +31,13 @@
                 <a class="c-fff vam" title="收藏" href="#">收藏</a>
             </span>
             </section>
-            <section class="c-attr-mt">
-              <a href="#" title="立即观看" class="comm-btn c-btn-3" @click="saveOrder">立即付款</a>
+            <section v-if="isBuy || Number(courseWebFront.price)===0" class="c-attr-mt">
+              <a href="#" title="立即观看" class="comm-btn c-btn-3">立即观看</a>
             </section>
+            <section v-else class="c-attr-mt">
+              <a href="#" title="立即购买" class="comm-btn c-btn-3" @click="saveOrder()">立即购买</a>
+            </section>
+
           </section>
         </aside>
         <aside class="thr-attr-box">
@@ -124,7 +128,7 @@
           <div class="i-box">
             <div>
               <section class="c-infor-tabTitle c-tab-title">
-                <a title href="javascript:void(0)">主讲讲师</a>
+                <a href="javascript:void(0)">主讲讲师</a>
               </section>
               <section class="stud-act-list">
                 <ul style="height: auto;">
@@ -159,17 +163,34 @@
 
   export default {
     asyncData({params, error}) {
-      return course.getCourseDetails(params.id).then(
-        response => {
-          return {
-            courseWebFront: response.data.data.courseWeb,
-            chapterListFront: response.data.data.chapterList,
-            courseId: params.id
-          }
-        }
-      )
+      console.log(params.id)
+      return {courseId: params.id}
     },
+
+    data() {
+      return {
+        courseWebFront: {},
+        chapterListFront: [],
+        courseId: '',
+        isBuy: null
+      }
+    },
+
+    created() {
+      this.getCourseDetailsByCourseId()
+    },
+
     methods: {
+      getCourseDetailsByCourseId() {
+        course.getCourseDetails(this.courseId).then(
+          response => {
+            this.courseWebFront = response.data.data.courseWeb
+            this.chapterListFront = response.data.data.chapterList
+            this.isBuy = response.data.data.isBuy
+          }
+        )
+      },
+
       saveOrder() {
         orders.saveOrdersByCourseId(this.courseId).then(
           response => {
@@ -179,5 +200,6 @@
       }
     }
 
-  };
+  }
+  ;
 </script>
