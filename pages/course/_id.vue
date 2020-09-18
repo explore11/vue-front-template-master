@@ -10,7 +10,7 @@
       <div>
         <article class="c-v-pic-wrap" style="height: 357px;">
           <section class="p-h-video-box" id="videoPlay">
-            <img :src="courseWebFront.cover" :alt="courseWebFront.title" class="dis c-v-pic">
+            <img style="height: 357px" :src="courseWebFront.cover" :alt="courseWebFront.title" class="dis c-v-pic">
           </section>
         </article>
         <aside class="c-attr-wrap">
@@ -32,7 +32,7 @@
             </span>
             </section>
             <section class="c-attr-mt">
-              <a href="#" title="立即观看" class="comm-btn c-btn-3">立即观看</a>
+              <a href="#" title="立即观看" class="comm-btn c-btn-3" @click="saveOrder">立即付款</a>
             </section>
           </section>
         </aside>
@@ -155,6 +155,7 @@
 </template>
 <script>
   import course from '@/api/course'
+  import orders from '@/api/orders'
 
   export default {
     asyncData({params, error}) {
@@ -162,10 +163,20 @@
         response => {
           return {
             courseWebFront: response.data.data.courseWeb,
-            chapterListFront: response.data.data.chapterList
+            chapterListFront: response.data.data.chapterList,
+            courseId: params.id
           }
         }
       )
+    },
+    methods: {
+      saveOrder() {
+        orders.saveOrdersByCourseId(this.courseId).then(
+          response => {
+            this.$router.push({path: '/orders/' + response.data.data.orderNo})
+          }
+        )
+      }
     }
 
   };
